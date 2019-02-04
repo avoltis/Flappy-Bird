@@ -36,7 +36,7 @@ function love.load()
 
     math.randomseed(os.time())
 
-    love.window.setTitle("Fifty Bird")
+    love.window.setTitle("Flappy Voltis")
 
     smallFont = love.graphics.newFont("font.ttf", 8)
     mediumFont = love.graphics.newFont("flappy.ttf", 14)
