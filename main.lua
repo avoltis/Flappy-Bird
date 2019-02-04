@@ -10,7 +10,9 @@ require "PipePair"
 
 require "StateMachine"
 require "states/BaseState"
+require "states/CountdownState"
 require "states/PlayState"
+require "states/ScoreState"
 require "states/TitleScreenState"
 
 WINDOW_WIDTH = 1280
@@ -37,7 +39,7 @@ local scrolling = true
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
 
-    love.window.setTitle("Flappy Voltis")
+    love.window.setTitle("Fifty Bird")
 
     smallFont = love.graphics.newFont("font.ttf", 8)
     mediumFont = love.graphics.newFont("flappy.ttf", 14)
@@ -62,8 +64,14 @@ function love.load()
         ["title"] = function()
             return TitleScreenState()
         end,
+        ["countdown"] = function()
+            return CountdownState()
+        end,
         ["play"] = function()
             return PlayState()
+        end,
+        ["score"] = function()
+            return ScoreState()
         end
     }
     gStateMachine:change("title")
