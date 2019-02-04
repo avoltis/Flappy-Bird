@@ -1,19 +1,16 @@
 push = require "push"
 
 Class = require "class"
-
-require "Bird"
-
-require "Pipe"
-
-require "PipePair"
-
 require "StateMachine"
 require "states/BaseState"
 require "states/CountdownState"
 require "states/PlayState"
 require "states/ScoreState"
 require "states/TitleScreenState"
+
+require "Bird"
+require "Pipe"
+require "PipePair"
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -32,12 +29,12 @@ local GROUND_SCROLL_SPEED = 60
 
 local BACKGROUND_LOOPING_POINT = 413
 
-local GROUND_LOOPING_POINT = 514
-
-local scrolling = true
+scrolling = true
 
 function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
+
+    math.randomseed(os.time())
 
     love.window.setTitle("Fifty Bird")
 
@@ -46,6 +43,18 @@ function love.load()
     flappyFont = love.graphics.newFont("flappy.ttf", 28)
     hugeFont = love.graphics.newFont("flappy.ttf", 56)
     love.graphics.setFont(flappyFont)
+
+    sounds = {
+        ["jump"] = love.audio.newSource("jump.wav", "static"),
+        ["explosion"] = love.audio.newSource("explosion.wav", "static"),
+        ["hurt"] = love.audio.newSource("hurt.wav", "static"),
+        ["score"] = love.audio.newSource("score.wav", "static"),
+        -- https://freesound.org/people/xsgianni/sounds/388079/
+        ["music"] = love.audio.newSource("marios_way.mp3", "static")
+    }
+
+    sounds["music"]:setLooping(true)
+    sounds["music"]:play()
 
     push:setupScreen(
         VIRTUAL_WIDTH,
@@ -96,8 +105,10 @@ function love.keyboard.wasPressed(key)
 end
 
 function love.update(dt)
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % GROUND_LOOPING_POINT
+    if scrolling then
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+    end
 
     gStateMachine:update(dt)
 

@@ -11,7 +11,6 @@ function PlayState:init()
     self.bird = Bird()
     self.pipePairs = {}
     self.timer = 0
-
     self.score = 0
 
     self.lastY = -PIPE_HEIGHT + math.random(80) + 20
@@ -35,6 +34,7 @@ function PlayState:update(dt)
             if pair.x + PIPE_WIDTH < self.bird.x then
                 self.score = self.score + 1
                 pair.scored = true
+                sounds["score"]:play()
             end
         end
 
@@ -47,11 +47,12 @@ function PlayState:update(dt)
         end
     end
 
-    self.bird:update(dt)
-
     for k, pair in pairs(self.pipePairs) do
         for l, pipe in pairs(pair.pipes) do
             if self.bird:collides(pipe) then
+                sounds["explosion"]:play()
+                sounds["hurt"]:play()
+
                 gStateMachine:change(
                     "score",
                     {
@@ -62,7 +63,12 @@ function PlayState:update(dt)
         end
     end
 
+    self.bird:update(dt)
+
     if self.bird.y > VIRTUAL_HEIGHT - 15 then
+        sounds["explosion"]:play()
+        sounds["hurt"]:play()
+
         gStateMachine:change(
             "score",
             {
@@ -81,4 +87,12 @@ function PlayState:render()
     love.graphics.print("Score: " .. tostring(self.score), 8, 8)
 
     self.bird:render()
+end
+
+function PlayState:enter()
+    scrolling = true
+end
+
+function PlayState:exit()
+    scrolling = false
 end
