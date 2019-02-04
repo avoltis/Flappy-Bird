@@ -68,7 +68,7 @@ function love.keypressed(key)
 end
 
 function love.keyboard.wasPressed(key)
-    return love.keyboard.keyPressed[key]
+    return love.keyboard.keysPressed[key]
 end
 
 function love.update(dt)
